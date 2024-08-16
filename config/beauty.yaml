@@ -37,7 +37,7 @@ MAX_ITEM_LIST_LENGTH: 20
 embedding_size: 64
 hidden_size: 128
 inner_size: 512
-phm : 1
+ahe : 1
 seed: 2020
 #num_layers: 2
 #dropout_prob: 0.3
