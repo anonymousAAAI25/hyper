@@ -1,12 +1,9 @@
 import torch
 from torch import nn
 from torch.nn.init import xavier_uniform_, xavier_normal_
-
 from recbole.model.abstract_recommender import SequentialRecommender
 from recbole.model.loss import BPRLoss
-from .GRU import MyGRU
-from .phm import PHMLayer
-from .utils.PHMTokenEmbedding import PHMEmbedding
+from .utils.AHETokenEmbedding import AHEEmbedding
 
 class GRU4Rec(SequentialRecommender):
     r"""GRU4Rec is a model that incorporate RNN for recommendation.
@@ -27,13 +24,11 @@ class GRU4Rec(SequentialRecommender):
         self.loss_type = config["loss_type"]
         self.num_layers = config["num_layers"]
         self.dropout_prob = config["dropout_prob"]
-        self.phm = config["phm"]
-        self.nn_or_phm = config["nn_or_phm"]
+        self.ahe = config["ahe"]
+        
         # define layers and loss
-        if self.phm == 0:
-            self.item_embedding = nn.Embedding(self.n_items, self.embedding_size, padding_idx=0)
-        else:
-            self.item_embedding = PHMEmbedding(self.n_items, self.embedding_size,phm=self.phm, padding_idx=0)
+
+        self.item_embedding = AHEEmbedding(self.n_items, self.embedding_size,ahe=self.ahe, padding_idx=0)
         
         self.emb_dropout = nn.Dropout(self.dropout_prob)
         
@@ -45,21 +40,7 @@ class GRU4Rec(SequentialRecommender):
             batch_first=True,
         )
         self.dense = nn.Linear(self.hidden_size, self.embedding_size)
-        """
-        self.gru_layers = MyGRU(
-            phm=self.phm,
-            input_size=self.embedding_size,
-            hidden_size=self.hidden_size,
-            num_layers=self.num_layers,
-            bias=False,
-            batch_first=True,
-        )
-        
-        if self.phm == 0:
-            self.dense = nn.Linear(self.hidden_size, self.embedding_size)
-        else:
-            self.dense = PHMLayer(self.phm,self.hidden_size, self.embedding_size)
-        """
+
         self.dense = nn.Linear(self.hidden_size, self.embedding_size)
         if self.loss_type == "BPR":
             self.loss_fct = BPRLoss()
