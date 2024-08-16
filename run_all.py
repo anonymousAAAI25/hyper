@@ -19,10 +19,10 @@ def output_result(config,num_params,exclude_emb_params,test_result,execution_tim
     data_name = str(config['dataset'])
 
     output = model_name + "_" + data_name + "_" + str(config['phm']) + "_" + str(config['embedding_size']) + "_" + str(num_params) + "_" + str(exclude_emb_params) +"_" + str(num_params-exclude_emb_params) + "_" + str(execution_time if test_result != None else 0)
-    # 打开文件以追加模式写入
+    
     file_name = data_name +"/" + model_name + "-" + data_name + ".txt"
     with open(file_name, 'a',encoding='utf-8') as f:
-        # 将输出重定向到文件
+        
         print(output, file=f)
         if test_result != None:
             print(test_result,file=f)  
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     dataset = create_dataset(config)
     logger.info(dataset)
 
-    train_data, valid_data, test_data = data_preparation(config, dataset)#这行dataset出错了，把.yaml文件改成T0
+    train_data, valid_data, test_data = data_preparation(config, dataset)
 
     # model loading and initialization
 
@@ -89,17 +89,7 @@ if __name__ == '__main__':
     num_params,exclude_emb_params = count_parameters(model)
     
     logger.info(model)
-    """
-    if config['phm'] == 0:
-        with open('temp/' + config['data_name'] + config['model_name'] + 'phm0.txt','w') as file:
-            file.write(str(num_params))
-    elif config['phm'] > 1:
-        with open('temp/' + config['data_name'] + config['model_name'] + 'phm0.txt','r') as file:
-            num_params_0 = int(file.read())
-            if num_params_0 < num_params:
-                output_result(config,num_params,None,None,None)
-                exit()
-    """
+
     # trainer loading and initialization
     trainer = Trainer(config, model)
     
