@@ -23,7 +23,7 @@ from torch.nn.init import normal_
 
 from recbole.model.abstract_recommender import SequentialRecommender
 from recbole.model.loss import BPRLoss
-from .utils.PHMTokenEmbedding import PHMEmbedding
+from .utils.AHETokenEmbedding import AHEEmbedding
 
 class STAMP(SequentialRecommender):
     r"""STAMP is capable of capturing users’ general interests from the long-term memory of a session context,
@@ -44,8 +44,8 @@ class STAMP(SequentialRecommender):
         self.embedding_size = config["embedding_size"]
 
         # define layers and loss
-        self.item_embedding = PHMEmbedding(
-            self.n_items, self.embedding_size, config["phm"],padding_idx=0
+        self.item_embedding = aheEmbedding(
+            self.n_items, self.embedding_size, config["ahe"],padding_idx=0
         )
         self.w1 = nn.Linear(self.embedding_size, self.embedding_size, bias=False)
         self.w2 = nn.Linear(self.embedding_size, self.embedding_size, bias=False)
