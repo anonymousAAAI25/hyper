@@ -55,7 +55,7 @@ def get_test_loss(model,test_data):
 if __name__ == '__main__':
     
     
-    config = Config(model='GRU4Rec', dataset='ml-1m', config_file_list=['config/ml-1m.yaml'])
+    config = Config(model='GRU4Rec', dataset='gift', config_file_list=['config/gift.yaml'])
     if config['phm'] == 0:
         from recbole.model.sequential_recommender import GRU4Rec,BERT4Rec,SASRec,Caser
     else:
