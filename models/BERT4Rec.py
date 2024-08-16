@@ -1,20 +1,16 @@
 from recbole.model.abstract_recommender import SequentialRecommender
 from recbole.model.loss import BPRLoss
-from .phm import PHMLayer
 import copy
 import math
-
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as fn
 from torch.nn.init import normal_
-
 from recbole.utils import FeatureType, FeatureSource
-#from .transformer_phm.TransformerEncoder import TransformerEncoder
 from models.transformer.TransformerEncoder import TransformerEncoder
 import random
-from .utils.PHMTokenEmbedding import PHMEmbedding
+from .utils.AHETokenEmbedding import AHEEmbedding
 
 class BERT4Rec(SequentialRecommender):
     def __init__(self, config, dataset):
@@ -41,7 +37,7 @@ class BERT4Rec(SequentialRecommender):
 
         self.loss_type = config["loss_type"]
         self.initializer_range = config["initializer_range"]
-        self.phm = config["phm"]
+        self.ahe = config["ahe"]
         
         # load dataset info
         self.mask_token = self.n_items
@@ -49,25 +45,13 @@ class BERT4Rec(SequentialRecommender):
 
         # define layers and loss
         
-        self.item_embedding = PHMEmbedding(self.n_items + 1, self.hidden_size,self.phm, padding_idx=0)  # mask token add 1
+        self.item_embedding = AHEEmbedding(self.n_items + 1, self.hidden_size,self.ahe, padding_idx=0)  # mask token add 1
 
-        self.position_embedding = PHMEmbedding(self.max_seq_length, self.hidden_size,self.phm)  # add mask_token at the last
+        self.position_embedding = AHEEmbedding(self.max_seq_length, self.hidden_size,self.ahe)  # add mask_token at the last
         #self.item_embedding = nn.Embedding(self.n_items + 1, self.hidden_size, padding_idx=0)  # mask token add 1
 
         #self.position_embedding = nn.Embedding(self.max_seq_length, self.hidden_size)  # add mask_token at the last
-        """
-        self.trm_encoder = TransformerEncoder(
-            phm=self.phm,
-            n_layers=self.n_layers,
-            n_heads=self.n_heads,
-            hidden_size=self.hidden_size,
-            inner_size=self.inner_size,
-            hidden_dropout_prob=self.hidden_dropout_prob,
-            attn_dropout_prob=self.attn_dropout_prob,
-            hidden_act=self.hidden_act,
-            layer_norm_eps=self.layer_norm_eps,
-        )
-        """
+
         self.trm_encoder = TransformerEncoder(
             n_layers=self.n_layers,
             n_heads=self.n_heads,
@@ -81,7 +65,7 @@ class BERT4Rec(SequentialRecommender):
         self.LayerNorm = nn.LayerNorm(self.hidden_size, eps=self.layer_norm_eps)
         self.dropout = nn.Dropout(self.hidden_dropout_prob)
         self.output_ffn = nn.Linear(self.hidden_size, self.hidden_size)
-        #self.output_ffn = PHMLayer(self.phm,self.hidden_size, self.hidden_size)
+
         self.output_gelu = nn.GELU()
         self.output_ln = nn.LayerNorm(self.hidden_size, eps=self.layer_norm_eps)
         self.output_bias = nn.Parameter(torch.zeros(self.n_items))
@@ -98,7 +82,7 @@ class BERT4Rec(SequentialRecommender):
     def _init_weights(self, module):
         """Initialize the weights"""
         if isinstance(module, (nn.Linear, nn.Embedding)):
-        #if isinstance(module, (PHMLayer, nn.Embedding)):
+        #if isinstance(module, (AHELayer, nn.Embedding)):
             # Slightly different from the TF version which uses truncated_normal for initialization
             # cf https://github.com/pytorch/pytorch/pull/5617
             module.weight.data.normal_(mean=0.0, std=self.initializer_range)
@@ -106,7 +90,7 @@ class BERT4Rec(SequentialRecommender):
             module.bias.data.zero_()
             module.weight.data.fill_(1.0)
         if isinstance(module, nn.Linear) and module.bias is not None:
-        #if isinstance(module, PHMLayer) and module.bias is not None:
+        #if isinstance(module, AHELayer) and module.bias is not None:
             module.bias.data.zero_()
 
     def reconstruct_test_data(self, item_seq, item_seq_len):
