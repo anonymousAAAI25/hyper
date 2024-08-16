@@ -1,6 +1,5 @@
 from recbole.model.abstract_recommender import SequentialRecommender
 from recbole.model.loss import BPRLoss
-from .phm import PHMLayer
 import copy
 import math
 
@@ -11,9 +10,8 @@ import torch.nn.functional as fn
 from torch.nn.init import normal_
 
 from recbole.utils import FeatureType, FeatureSource
-#from .transformer_phm.TransformerEncoder import TransformerEncoder
 from models.transformer.TransformerEncoder import TransformerEncoder
-from .utils.PHMTokenEmbedding import PHMEmbedding
+from .utils.aheTokenEmbedding import aheEmbedding
 class SASRec(SequentialRecommender):
     r"""
     SASRec is the first sequential recommender based on self-attentive mechanism.
@@ -41,26 +39,13 @@ class SASRec(SequentialRecommender):
 
         self.initializer_range = config["initializer_range"]
         self.loss_type = config["loss_type"]
-        self.phm = config["phm"]
+        self.ahe = config["ahe"]
         self.embedding_size = config["embedding_size"]
         # define layers and loss
-        self.item_embedding = PHMEmbedding(self.n_items, self.hidden_size,self.phm, padding_idx=0)
-        #self.position_embedding = PHMEmbedding(self.max_seq_length, self.hidden_size,self.phm)
-        #self.item_embedding = nn.Embedding(self.n_items, self.hidden_size, padding_idx=0)
-        self.position_embedding = PHMEmbedding(self.max_seq_length, self.hidden_size,self.phm)
-        """
-        self.trm_encoder = TransformerEncoder(
-            phm=self.phm,
-            n_layers=self.n_layers,
-            n_heads=self.n_heads,
-            hidden_size=self.hidden_size,
-            inner_size=self.inner_size,
-            hidden_dropout_prob=self.hidden_dropout_prob,
-            attn_dropout_prob=self.attn_dropout_prob,
-            hidden_act=self.hidden_act,
-            layer_norm_eps=self.layer_norm_eps,
-        )
-        """
+        self.item_embedding = aheEmbedding(self.n_items, self.hidden_size,self.ahe, padding_idx=0)
+
+        self.position_embedding = aheEmbedding(self.max_seq_length, self.hidden_size,self.ahe)
+
         self.trm_encoder = TransformerEncoder(
             n_layers=self.n_layers,
             n_heads=self.n_heads,
