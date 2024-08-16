@@ -59,8 +59,8 @@ if __name__ == '__main__':
     if config['phm'] == 0:
         from recbole.model.sequential_recommender import GRU4Rec,BERT4Rec,SASRec,STAMP
     else:
-        from models.PHM_SASRec import SASRec
-        from models.PHM_BERT4Rec import BERT4Rec
+        from models.SASRec import SASRec
+        from models.BERT4Rec import BERT4Rec
         from models.GRU4Rec import GRU4Rec
         from models.STAMP import STAMP
     config = Config(model=config['model_name'], dataset=config['data_name'], config_file_list=['config/' + config['data_name'] +'.yaml'])
