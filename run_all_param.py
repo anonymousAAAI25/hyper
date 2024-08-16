@@ -56,7 +56,7 @@ if __name__ == '__main__':
     
     
     config = Config(model='GRU4Rec', dataset='gift', config_file_list=['config/gift.yaml'])
-    if config['phm'] == 0:
+    if config['ahe'] == 0:
         from recbole.model.sequential_recommender import GRU4Rec,BERT4Rec,SASRec,STAMP
     else:
         from models.SASRec import SASRec
@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     train_data, valid_data, test_data = data_preparation(config, dataset)
 
-    print(config["phm"])
+    print(config["ahe"])
 
     #get model accoding to name
     model = get_model(config['model_name'])(config, train_data.dataset).to(config['device'])
