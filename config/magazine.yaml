@@ -34,7 +34,7 @@ data_name: ~
 embedding_size: 64
 hidden_size: 64
 inner_size: 256
-phm : ~
+ahe : ~
 seed: 2020
 #num_layers: 2
 #dropout_prob: 0.3
