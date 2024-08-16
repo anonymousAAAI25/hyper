@@ -44,7 +44,7 @@ class STAMP(SequentialRecommender):
         self.embedding_size = config["embedding_size"]
 
         # define layers and loss
-        self.item_embedding = aheEmbedding(
+        self.item_embedding = AHEEmbedding(
             self.n_items, self.embedding_size, config["ahe"],padding_idx=0
         )
         self.w1 = nn.Linear(self.embedding_size, self.embedding_size, bias=False)
