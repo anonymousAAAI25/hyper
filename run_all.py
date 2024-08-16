@@ -18,7 +18,7 @@ def output_result(config,num_params,exclude_emb_params,test_result,execution_tim
     model_name = str(config['model'])
     data_name = str(config['dataset'])
 
-    output = model_name + "_" + data_name + "_" + str(config['phm']) + "_" + str(config['embedding_size']) + "_" + str(num_params) + "_" + str(exclude_emb_params) +"_" + str(num_params-exclude_emb_params) + "_" + str(execution_time if test_result != None else 0)
+    output = model_name + "_" + data_name + "_" + str(config['ahe']) + "_" + str(config['embedding_size']) + "_" + str(num_params) + "_" + str(exclude_emb_params) +"_" + str(num_params-exclude_emb_params) + "_" + str(execution_time if test_result != None else 0)
     
     file_name = data_name +"/" + model_name + "-" + data_name + ".txt"
     with open(file_name, 'a',encoding='utf-8') as f:
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     
     
     config = Config(model='GRU4Rec', dataset='gift', config_file_list=['config/gift.yaml'])
-    if config['phm'] == 0:
+    if config['ahe'] == 0:
         from recbole.model.sequential_recommender import GRU4Rec,BERT4Rec,SASRec,Caser
     else:
         from models.SASRec import SASRec
