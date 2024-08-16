@@ -19,10 +19,10 @@ def output_result(config,num_params,exclude_emb_params,test_result,execution_tim
     data_name = str(config['dataset'])
 
     output = model_name + "_" + data_name + "_" + str(config['phm']) + "_" + str(config['embedding_size']) + "_" + str(config['hidden_size']) + "_" + str(num_params) + "_" + str(exclude_emb_params) + "_" + str(num_params-exclude_emb_params) + "_" + str(execution_time if test_result != None else 0)
-    # 打开文件以追加模式写入
+    
     file_name = model_name + "-" + data_name + ".txt"
     with open(file_name, 'a',encoding='utf-8') as f:
-        # 将输出重定向到文件
+        
         print(output, file=f)
         if test_result != None:
             print(test_result,file=f)  
